@@ -8,14 +8,24 @@ interface Designations {
     name: string;
     remark: string;
 }
+
+interface Employee{
+    employee_id:number,
+    full_name:string,
+    dateOfJoining:string,
+    isManager:number,
+    designationName:string
+}
 export function Employee() {
+
+    const [employee, setEmployee] = useState<Employee[]>([]);
 
     const [isOpen, setIsOpen] = useState(false);
 
     const [designationNames, setDesignationNames] =useState<Designations[]>([]);
 
     const [formData, setFormData] = useState({
-        fullName: "",
+        full_name: "",
         designationName: "",
         dateOfJoining:"",
         isManager: 0
@@ -24,14 +34,31 @@ export function Employee() {
     const [isManager, setIsManager] = useState(0);
 
     const [selectDesName, setSelectDesName] = useState('');
+    function fetchDataEmployee() {
+        try {
+            axios.get('http://localhost:8080/employee/getAllEmployee')
+                .then((res: { data: any }) => {
+                    const jsonData = res.data;
+                    console.log(jsonData)
+                    setEmployee(jsonData);
+                    console.log(employee)
+                }).catch((error: any)=> {
+                console.error('Axios Error:', error)
+            });
+        } catch (error) {
+            console.log('Error fetching data: ', error)
+        }
+    }
 
-
-    function fetchData() {
+    useEffect(() => {
+        fetchDataEmployee();
+    }, []);
+    function fetchDesignationData() {
         try {
             axios.get('http://localhost:8080/designation/getDesignation')
                 .then((res: { data: any }) => {
                     const jsonData = res.data;
-                    setDesignationNames(jsonData);
+                    setDesignationNames(jsonData)
                     console.log(designationNames)
                 }).catch((error: any)=> {
                 console.error('Axios Error:', error)
@@ -42,7 +69,7 @@ export function Employee() {
     }
 
     useEffect(() => {
-        fetchData();
+        fetchDesignationData();
     }, []);
 
     const togglePopUp=()=>{
@@ -51,23 +78,19 @@ export function Employee() {
     const togglePopClose=()=>{
         setIsOpen(false);
     }
-
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
         setFormData({ ...formData, [name]: value });
     }
-
     function handleManagerCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
         const isChecked = event.target.checked;
         setFormData({ ...formData, isManager: isChecked ? 1 : 0 }); // Update isManager based on the checked status
     }
-
     function handleDesignationName(event: ChangeEvent<HTMLSelectElement>) {
         const { value } = event.target;
         setSelectDesName(value);
         setFormData({ ...formData, designationName: value });
     }
-
     function saveEmployee() {
         const jsonData = JSON.stringify(formData);
         axios.post('http://localhost:8080/employee/saveEmployee', jsonData,{
@@ -77,7 +100,7 @@ export function Employee() {
         })
             .then(response => {
                 console.log('Designation saved successfully:', response.data);
-                fetchData();
+                fetchDataEmployee();
                 alert('Designation saved successfully !')
             })
             .catch(error => {
@@ -85,6 +108,8 @@ export function Employee() {
                 alert('Error user saving:'+error);
             });
     }
+
+
 
 
 
@@ -110,7 +135,7 @@ export function Employee() {
 
                             <div>
                                 <label className="">FULL NAME</label>
-                                <input type="text"  name="fullName"
+                                <input type="text"  name="full_name" onChange={handleInputChange}
                                        className="w-full h-12 px-3 py-2 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
                             </div>
 
@@ -153,6 +178,7 @@ export function Employee() {
 
             <div className="h-auto mt-20">
                 <table className="w-full">
+                    <thead>
                     <tr className="bg-[#EAEAEA] h-10">
                         <th className="text-center">EMP ID</th>
                         <th className="text-center">DESIGNATION</th>
@@ -160,9 +186,26 @@ export function Employee() {
                         <th className="text-center">LAST NAME</th>
                         <th className="text-center">DATE OF JOIN</th>
                     </tr>
-                    <tbody></tbody>
+                    </thead>
+                    <tbody>
+                    {Array.isArray(employee) && employee.map((emp) => {
+                        const fullNameArray = emp.full_name ? emp.full_name.split(" ") : ["", ""]; // Check if full_name is not null or undefined
+                        const firstName = fullNameArray[0];
+                        const lastName = fullNameArray.slice(1).join(" ");
+                        return (
+                            <tr className="h-12 text-center" key={emp.employee_id} >
+                                <td>{emp.employee_id}</td>
+                                <td>{emp.designationName}</td>
+                                <td>{firstName}</td>
+                                <td>{lastName}</td>
+                                <td>{emp.dateOfJoining}</td>
+                            </tr>
+                        );
+                    })}
+                    </tbody>
                 </table>
             </div>
+
 
         </section>
     );

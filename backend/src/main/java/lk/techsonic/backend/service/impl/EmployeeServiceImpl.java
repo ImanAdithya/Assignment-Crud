@@ -28,7 +28,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Designation designation = getDesignation (employeeDTO.getDesignationName ());
         employeeRepository.save (new Employee (
             0,
-                employeeDTO.getFullName (),
+                employeeDTO.getFull_name (),
                 employeeDTO.getDateOfJoining (),
                 employeeDTO.getIsManager (),
                 designation
@@ -47,7 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         ArrayList<EmployeeDTO> getAllEmployees=new ArrayList<> ();
 
         for (Employee employee : all) {
-            getAllEmployees.add (new EmployeeDTO (employee.getEmployee_id (), employee.getFullName (),employee.getDateOfJoining (),employee.getIsManager (),employee.getDesignation ().getName ()));
+            getAllEmployees.add (new EmployeeDTO (employee.getEmployee_id (), employee.getFull_name (),employee.getDateOfJoining (),employee.getIsManager (),employee.getDesignation ().getName ()));
         }
 
         return getAllEmployees;

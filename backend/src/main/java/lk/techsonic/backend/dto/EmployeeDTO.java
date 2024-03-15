@@ -18,7 +18,7 @@ public class EmployeeDTO {
 
     private Integer employee_id;
 
-    private String fullName;
+    private String full_name;
 
     private Date dateOfJoining;
 

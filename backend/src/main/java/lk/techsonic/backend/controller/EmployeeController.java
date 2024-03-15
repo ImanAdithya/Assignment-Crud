@@ -7,6 +7,7 @@ import lk.techsonic.backend.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -19,13 +20,16 @@ public class EmployeeController {
 
     @PostMapping("saveEmployee")
     public ResponseUtil saveEmployee(@RequestBody EmployeeDTO employeeDTO){
+        Date dateOfJoining = employeeDTO.getDateOfJoining();
+        employeeDTO.setDateOfJoining(dateOfJoining);
         employeeService.saveEmployee (employeeDTO);
-        return new ResponseUtil ("OK","Employee Added Succuss",employeeDTO.getFullName ());
+        return new ResponseUtil ("OK","Employee Added Succuss",employeeDTO.getFull_name ());
     }
 
     @GetMapping("getAllEmployee")
-    public ResponseUtil getAllEmployee(){
+    public List<EmployeeDTO> getAllEmployee(){
         List<EmployeeDTO> allEmployee = employeeService.getAllEmployee ();
-        return new ResponseUtil ("OK","Employee Loaded Succuss",allEmployee);
+        //return new ResponseUtil ("OK","Employee Loaded Succuss",allEmployee);
+        return allEmployee;
     }
 }
