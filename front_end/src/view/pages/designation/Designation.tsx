@@ -1,5 +1,6 @@
 import axios from "axios";
 import {ChangeEvent, useEffect, useState} from "react";
+import {Employee} from "../employee/Employee";
 
 
 interface Designations {
@@ -20,7 +21,6 @@ export function Designation() {
                 .then((res: { data: any }) => {
                     const jsonData = res.data;
                     setDesignation(jsonData)
-                    console.log(jsonData)
                     console.log(designation)
                 }).catch((error: any)=> {
                 console.error('Axios Error:', error)
@@ -65,6 +65,7 @@ export function Designation() {
 
     return (
         <section className='w-screen h-[90vh] border-2 p-10'>
+
             <h2 className="text-4xl font-bold opacity-70">DESIGNATION MANAGE</h2>
 
             <div className="flex flex-row justify-between mt-10">

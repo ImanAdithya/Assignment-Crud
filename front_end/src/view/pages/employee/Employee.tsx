@@ -1,10 +1,38 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {CgClose} from "react-icons/cg";
 import {IoClose} from "react-icons/io5";
+import axios from "axios";
 
+interface Designations {
+    designation_id: number;
+    name: string;
+    remark: string;
+}
 export function Employee() {
 
     const [isOpen, setIsOpen] = useState(false);
+
+    const [designationNames, setDesignationNames] =useState<Designations[]>([]);
+
+
+    function fetchData() {
+        try {
+            axios.get('http://localhost:8080/designation/getDesignation')
+                .then((res: { data: any }) => {
+                    const jsonData = res.data;
+                    setDesignationNames(jsonData);
+                    console.log(designationNames)
+                }).catch((error: any)=> {
+                console.error('Axios Error:', error)
+            });
+        } catch (error) {
+            console.log('Error fetching data: ', error)
+        }
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const togglePopUp=()=>{
         setIsOpen(true);
@@ -42,7 +70,10 @@ export function Employee() {
                             <div className='flex flex-col gap-2'>
                                 <label className="">DESIGNATION</label>
                                 <select className='h-12 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500'>
-                                    <option value="">Test</option>
+                                    <option value="">Select</option>
+                                    {designationNames.map((des) =>(
+                                        <option key={des.designation_id} value={des.name}>{des.name}</option>
+                                    ))}
                                 </select>
                             </div>
 
