@@ -7,7 +7,10 @@ export function Employee() {
     const [isOpen, setIsOpen] = useState(false);
 
     const togglePopUp=()=>{
-        setIsOpen(!isOpen);
+        setIsOpen(true);
+    }
+    const togglePopClose=()=>{
+        setIsOpen(false);
     }
 
     return (
@@ -25,6 +28,10 @@ export function Employee() {
                 <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded-md">
                         <div className="flex flex-col gap-5">
+
+                            <div className="w-full flex flex-row justify-end">
+                                <CgClose className="text-xl" onClick={togglePopClose}></CgClose>
+                            </div>
 
                             <div>
                                 <label className="">FULL NAME</label>
@@ -64,6 +71,20 @@ export function Employee() {
                     </div>
                 </div>
             )}
+
+
+            <div className="h-auto mt-20">
+                <table className="w-full">
+                    <tr className="bg-[#EAEAEA] h-10">
+                        <th className="text-center">EMP ID</th>
+                        <th className="text-center">DESIGNATION</th>
+                        <th className="text-center">FIRST NAME</th>
+                        <th className="text-center">LAST NAME</th>
+                        <th className="text-center">DATE OF JOIN</th>
+                    </tr>
+                    <tbody></tbody>
+                </table>
+            </div>
 
         </section>
     );

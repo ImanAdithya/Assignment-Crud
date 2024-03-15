@@ -23,9 +23,9 @@ public class DesignationController {
     }
 
     @GetMapping("/getDesignation")
-    public ResponseUtil getDestination(){
+    public List getDestination(){
         List<DesignationDTO> allDestination = designationService.getAllDestination ();
-        return new ResponseUtil ("OK","Get Destination Succuss",allDestination);
+        return allDestination;
     }
 
 }
