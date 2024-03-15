@@ -25,6 +25,7 @@ export function Employee() {
     const [designationNames, setDesignationNames] =useState<Designations[]>([]);
 
     const [formData, setFormData] = useState({
+        employee_id:0,
         full_name: "",
         designationName: "",
         dateOfJoining:"",
@@ -34,6 +35,7 @@ export function Employee() {
     const [isManager, setIsManager] = useState(0);
 
     const [selectDesName, setSelectDesName] = useState('');
+
     function fetchDataEmployee() {
         try {
             axios.get('http://localhost:8080/employee/getAllEmployee')
@@ -108,8 +110,19 @@ export function Employee() {
                 alert('Error user saving:'+error);
             });
     }
+    function handleTableRowClick(selectedEmp: Employee) {
+        setFormData(selectedEmp)
+        setIsOpen(true);
+    }
 
-
+    function clearEmployeeFields() {
+        setFormData({
+            employee_id:0,
+            full_name: "",
+            designationName: "",
+            dateOfJoining:"",
+            isManager: 0 });
+    }
 
 
 
@@ -134,14 +147,20 @@ export function Employee() {
                             </div>
 
                             <div>
+                                <label className="">EMP ID</label>
+                                <input type="text"  name="employee_id" onChange={handleInputChange} value={formData.employee_id}
+                                       className="w-full h-12 px-3 py-2 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
+                            </div>
+
+                            <div>
                                 <label className="">FULL NAME</label>
-                                <input type="text"  name="full_name" onChange={handleInputChange}
+                                <input type="text"  name="full_name" onChange={handleInputChange} value={formData.full_name}
                                        className="w-full h-12 px-3 py-2 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
                             </div>
 
                             <div className='flex flex-col gap-2'>
                                 <label className="">DESIGNATION</label>
-                                <select onChange={handleDesignationName} name="designationName" className='h-12 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500'>
+                                <select value={formData.designationName} onChange={handleDesignationName} name="designationName" className='h-12 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500'>
                                     <option value="">Select</option>
                                     {designationNames.map((des) =>(
                                         <option key={des.designation_id} value={des.name}>{des.name}</option>
@@ -151,20 +170,20 @@ export function Employee() {
 
                             <div>
                                 <label className="">DATE OF JOIN</label>
-                                <input type="date"  name="dateOfJoining " onChange={handleInputChange}
+                                <input value={formData.dateOfJoining} type="date"  name="dateOfJoining " onChange={handleInputChange}
                                        className="w-full h-12 px-3 py-2 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
                             </div>
 
                             <div className='flex flex-row items-center gap-5'>
                                 <label className="">IS MANAGER</label>
-                                <input type="checkbox"  name="isManager" onChange={handleManagerCheckboxChange}
+                                <input  checked={formData.isManager === 1} type="checkbox"  name="isManager" onChange={handleManagerCheckboxChange}
                                        className=" h-8 px-3 py-2 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
                             </div>
 
                             <div className="flex flex-row gap-5">
                                 <button className='bg-blue-600 text-white text-lg px-12 py-1 rounded'>NEW</button>
                                 <button onClick={saveEmployee} className='bg-green-500 text-white text-lg px-12 py-1 rounded'>SAVE</button>
-                                <button className='bg-amber-500 text-white text-lg px-12 py-1 rounded'>RESET</button>
+                                <button onClick={clearEmployeeFields} className='bg-amber-500 text-white text-lg px-12 py-1 rounded'>RESET</button>
                                 <button className='bg-red-700 text-white text-lg px-12 py-1 rounded'>DELETE</button>
                             </div>
 
@@ -189,12 +208,12 @@ export function Employee() {
                     </thead>
                     <tbody>
                     {Array.isArray(employee) && employee.map((emp) => {
-                        const fullNameArray = emp.full_name ? emp.full_name.split(" ") : ["", ""]; // Check if full_name is not null or undefined
+                        const fullNameArray = emp.full_name.split(" ");
                         const firstName = fullNameArray[0];
                         const lastName = fullNameArray.slice(1).join(" ");
                         return (
-                            <tr className="h-12 text-center" key={emp.employee_id} >
-                                <td>{emp.employee_id}</td>
+                            <tr className="h-12 text-center" onClick={() => handleTableRowClick(emp)}>
+                            <td>{emp.employee_id}</td>
                                 <td>{emp.designationName}</td>
                                 <td>{firstName}</td>
                                 <td>{lastName}</td>
