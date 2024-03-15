@@ -12,4 +12,6 @@ public interface EmployeeService {
     void  saveEmployee (EmployeeDTO employeeDTO);
     Designation getDesignation(String name);
     List<EmployeeDTO> getAllEmployee();
+
+    void deleteEmployee(String id);
 }

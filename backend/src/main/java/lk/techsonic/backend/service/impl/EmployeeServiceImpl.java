@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -51,5 +52,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         return getAllEmployees;
+    }
+
+    @Override
+    public void deleteEmployee(String id) {
+        employeeRepository.deleteById (id);
     }
 }

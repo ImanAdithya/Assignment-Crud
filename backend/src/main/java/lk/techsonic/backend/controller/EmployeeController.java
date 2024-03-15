@@ -20,8 +20,6 @@ public class EmployeeController {
 
     @PostMapping("saveEmployee")
     public ResponseUtil saveEmployee(@RequestBody EmployeeDTO employeeDTO){
-        Date dateOfJoining = employeeDTO.getDateOfJoining();
-        employeeDTO.setDateOfJoining(dateOfJoining);
         employeeService.saveEmployee (employeeDTO);
         return new ResponseUtil ("OK","Employee Added Succuss",employeeDTO.getFull_name ());
     }
@@ -31,5 +29,12 @@ public class EmployeeController {
         List<EmployeeDTO> allEmployee = employeeService.getAllEmployee ();
         //return new ResponseUtil ("OK","Employee Loaded Succuss",allEmployee);
         return allEmployee;
+    }
+
+    @DeleteMapping(params = {"employee_id"})
+    public ResponseUtil deleteCar(String employee_id){
+        System.out.println ("____________"+employee_id);
+        employeeService.deleteEmployee (employee_id);
+        return new ResponseUtil ("OK","Employee Deleted Success",employee_id);
     }
 }

@@ -25,7 +25,7 @@ export function Employee() {
     const [designationNames, setDesignationNames] =useState<Designations[]>([]);
 
     const [formData, setFormData] = useState({
-        employee_id:0,
+        employee_id: 0,
         full_name: "",
         designationName: "",
         dateOfJoining:"",
@@ -73,8 +73,8 @@ export function Employee() {
     useEffect(() => {
         fetchDesignationData();
     }, []);
-
     const togglePopUp=()=>{
+        clearEmployeeFields();
         setIsOpen(true);
     }
     const togglePopClose=()=>{
@@ -114,7 +114,6 @@ export function Employee() {
         setFormData(selectedEmp)
         setIsOpen(true);
     }
-
     function clearEmployeeFields() {
         setFormData({
             employee_id:0,
@@ -122,6 +121,17 @@ export function Employee() {
             designationName: "",
             dateOfJoining:"",
             isManager: 0 });
+    }
+    function deleteSupplier() {
+        console.log(formData.employee_id);
+        axios.delete(`http://localhost:8080/employee/${formData.employee_id}`)
+            .then(response => {
+                console.log('Employee deleted successfully:', response.data);
+                fetchDataEmployee(); // Fetch updated employee data after deletion
+            })
+            .catch(error => {
+                console.error('Error deleting Employee:', error);
+            });
     }
 
 
@@ -184,7 +194,7 @@ export function Employee() {
                                 <button className='bg-blue-600 text-white text-lg px-12 py-1 rounded'>NEW</button>
                                 <button onClick={saveEmployee} className='bg-green-500 text-white text-lg px-12 py-1 rounded'>SAVE</button>
                                 <button onClick={clearEmployeeFields} className='bg-amber-500 text-white text-lg px-12 py-1 rounded'>RESET</button>
-                                <button className='bg-red-700 text-white text-lg px-12 py-1 rounded'>DELETE</button>
+                                <button onClick={deleteSupplier} className='bg-red-700 text-white text-lg px-12 py-1 rounded'>DELETE</button>
                             </div>
 
 
