@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import {CgClose} from "react-icons/cg";
 import {IoClose} from "react-icons/io5";
 import axios from "axios";
@@ -13,6 +13,17 @@ export function Employee() {
     const [isOpen, setIsOpen] = useState(false);
 
     const [designationNames, setDesignationNames] =useState<Designations[]>([]);
+
+    const [formData, setFormData] = useState({
+        fullName: "",
+        designationName: "",
+        dateOfJoining:"",
+        isManager: 0
+    });
+
+    const [isManager, setIsManager] = useState(0);
+
+    const [selectDesName, setSelectDesName] = useState('');
 
 
     function fetchData() {
@@ -41,6 +52,42 @@ export function Employee() {
         setIsOpen(false);
     }
 
+    function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+        const { name, value } = event.target;
+        setFormData({ ...formData, [name]: value });
+    }
+
+    function handleManagerCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
+        const isChecked = event.target.checked;
+        setFormData({ ...formData, isManager: isChecked ? 1 : 0 }); // Update isManager based on the checked status
+    }
+
+    function handleDesignationName(event: ChangeEvent<HTMLSelectElement>) {
+        const { value } = event.target;
+        setSelectDesName(value);
+        setFormData({ ...formData, designationName: value });
+    }
+
+    function saveEmployee() {
+        const jsonData = JSON.stringify(formData);
+        axios.post('http://localhost:8080/employee/saveEmployee', jsonData,{
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                console.log('Designation saved successfully:', response.data);
+                fetchData();
+                alert('Designation saved successfully !')
+            })
+            .catch(error => {
+                console.error('Error user saving:', error);
+                alert('Error user saving:'+error);
+            });
+    }
+
+
+
     return (
         <section className='relative w-screen h-[90vh] border-2 p-10'>
             <div className='flex flex-row justify-between'>
@@ -63,13 +110,13 @@ export function Employee() {
 
                             <div>
                                 <label className="">FULL NAME</label>
-                                <input type="text"  name="designationName"
+                                <input type="text"  name="fullName"
                                        className="w-full h-12 px-3 py-2 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
                             </div>
 
                             <div className='flex flex-col gap-2'>
                                 <label className="">DESIGNATION</label>
-                                <select className='h-12 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500'>
+                                <select onChange={handleDesignationName} name="designationName" className='h-12 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500'>
                                     <option value="">Select</option>
                                     {designationNames.map((des) =>(
                                         <option key={des.designation_id} value={des.name}>{des.name}</option>
@@ -79,19 +126,19 @@ export function Employee() {
 
                             <div>
                                 <label className="">DATE OF JOIN</label>
-                                <input type="date"  name="dateOfJoin"
+                                <input type="date"  name="dateOfJoining " onChange={handleInputChange}
                                        className="w-full h-12 px-3 py-2 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
                             </div>
 
                             <div className='flex flex-row items-center gap-5'>
                                 <label className="">IS MANAGER</label>
-                                <input type="checkbox"  name="isManager"
+                                <input type="checkbox"  name="isManager" onChange={handleManagerCheckboxChange}
                                        className=" h-8 px-3 py-2 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
                             </div>
 
                             <div className="flex flex-row gap-5">
                                 <button className='bg-blue-600 text-white text-lg px-12 py-1 rounded'>NEW</button>
-                                <button className='bg-green-500 text-white text-lg px-12 py-1 rounded'>SAVE</button>
+                                <button onClick={saveEmployee} className='bg-green-500 text-white text-lg px-12 py-1 rounded'>SAVE</button>
                                 <button className='bg-amber-500 text-white text-lg px-12 py-1 rounded'>RESET</button>
                                 <button className='bg-red-700 text-white text-lg px-12 py-1 rounded'>DELETE</button>
                             </div>
