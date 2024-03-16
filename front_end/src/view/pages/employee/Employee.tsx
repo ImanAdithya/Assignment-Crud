@@ -30,7 +30,7 @@ export function Employee() {
         employee_id: 0,
         full_name: '',
         designationName: '',
-        dateOfJoining:'',
+        dateOfJoining:"",
         isManager: 0,
     });
 
@@ -221,7 +221,7 @@ export function Employee() {
 
                             <div>
                                 <label className="">DATE OF JOIN</label>
-                                <input value={formData.dateOfJoining} type="date"  name="dateOfJoining " onChange={handleInputChange}
+                                <input value={formData.dateOfJoining} type="date"  name="dateOfJoining" onChange={handleInputChange}
                                        className="w-full h-12 px-3 py-2 text-gray-900 border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
                             </div>
 
@@ -267,7 +267,7 @@ export function Employee() {
                                 <td>{emp.designationName}</td>
                                 <td>{firstName}</td>
                                 <td>{lastName}</td>
-                                <td>{emp.dateOfJoining}</td>
+                                <td>{new Date(emp.dateOfJoining).toLocaleDateString()}</td>
                             </tr>
                         );
                     })}
