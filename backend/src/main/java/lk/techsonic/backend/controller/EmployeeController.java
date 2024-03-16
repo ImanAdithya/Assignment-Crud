@@ -32,9 +32,14 @@ public class EmployeeController {
     }
 
     @DeleteMapping(params = {"employee_id"})
-    public ResponseUtil deleteCar(String employee_id){
+    public ResponseUtil deleteEmployee(String employee_id){
         System.out.println ("____________"+employee_id);
         employeeService.deleteEmployee (employee_id);
         return new ResponseUtil ("OK","Employee Deleted Success",employee_id);
+    }
+
+    @GetMapping("getLastIndex")
+    public int getLastIndex(){
+        return employeeService.getLastIndex ();
     }
 }

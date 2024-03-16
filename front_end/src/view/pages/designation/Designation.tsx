@@ -37,8 +37,13 @@ export function Designation() {
         const { name, value } = event.target;
         setFormData({ ...formData, [name]: value });
     }
-
     function saveDesignation() {
+
+        if (!formData.name || !formData.remark ) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
         const jsonData = JSON.stringify(formData);
         axios.post('http://localhost:8080/designation/saveDesignation', jsonData,{
             headers: {

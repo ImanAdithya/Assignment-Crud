@@ -58,4 +58,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void deleteEmployee(String id) {
         employeeRepository.deleteById (id);
     }
+
+    @Override
+    public int getLastIndex() {
+        return employeeRepository.getLastIndex ();
+    }
 }

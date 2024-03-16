@@ -24,17 +24,20 @@ export function Employee() {
 
     const [designationNames, setDesignationNames] =useState<Designations[]>([]);
 
+    const [lastIndex, setLastIndex] = useState(0);
+
     const [formData, setFormData] = useState({
         employee_id: 0,
-        full_name: "",
-        designationName: "",
-        dateOfJoining:"",
-        isManager: 0
+        full_name: '',
+        designationName: '',
+        dateOfJoining:'',
+        isManager: 0,
     });
 
     const [isManager, setIsManager] = useState(0);
 
     const [selectDesName, setSelectDesName] = useState('');
+
 
     function fetchDataEmployee() {
         try {
@@ -54,6 +57,8 @@ export function Employee() {
 
     useEffect(() => {
         fetchDataEmployee();
+        fetchDesignationData();
+        fetchLastIndex();
     }, []);
     function fetchDesignationData() {
         try {
@@ -70,12 +75,41 @@ export function Employee() {
         }
     }
 
-    useEffect(() => {
-        fetchDesignationData();
-    }, []);
+    function fetchLastIndex() {
+        try {
+            axios.get('http://localhost:8080/employee/getLastIndex')
+                .then((res: { data: any }) => {
+                    const jsonData = res.data;
+                    setLastIndex(jsonData);
+                    console.log(jsonData);
+                }).catch((error: any)=> {
+                console.error('Axios Error:', error)
+            });
+        } catch (error) {
+            console.log('Error fetching data: ', error)
+        }
+    }
+
     const togglePopUp=()=>{
         clearEmployeeFields();
         setIsOpen(true);
+        setFormData({
+            employee_id: lastIndex+1,
+            full_name: '',
+            designationName: '',
+            dateOfJoining:'',
+            isManager: 0,
+        })
+
+    }
+    function newBtn() {
+        setFormData({
+            employee_id: lastIndex+1,
+            full_name: '',
+            designationName: '',
+            dateOfJoining:'',
+            isManager: 0,
+        })
     }
     const togglePopClose=()=>{
         setIsOpen(false);
@@ -94,6 +128,12 @@ export function Employee() {
         setFormData({ ...formData, designationName: value });
     }
     function saveEmployee() {
+
+        if (!formData.full_name || !formData.designationName || !formData.dateOfJoining) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
         const jsonData = JSON.stringify(formData);
         axios.post('http://localhost:8080/employee/saveEmployee', jsonData,{
             headers: {
@@ -122,7 +162,7 @@ export function Employee() {
             dateOfJoining:"",
             isManager: 0 });
     }
-    function deleteSupplier() {
+    function deleteEmployee() {
         console.log(formData.employee_id);
         axios.delete(`http://localhost:8080/employee/${formData.employee_id}`)
             .then(response => {
@@ -155,6 +195,7 @@ export function Employee() {
                             <div className="w-full flex flex-row justify-end">
                                 <CgClose className="text-xl" onClick={togglePopClose}></CgClose>
                             </div>
+
 
                             <div>
                                 <label className="">EMP ID</label>
@@ -191,10 +232,10 @@ export function Employee() {
                             </div>
 
                             <div className="flex flex-row gap-5">
-                                <button className='bg-blue-600 text-white text-lg px-12 py-1 rounded'>NEW</button>
+                                <button onClick={newBtn} className='bg-blue-600 text-white text-lg px-12 py-1 rounded'>NEW</button>
                                 <button onClick={saveEmployee} className='bg-green-500 text-white text-lg px-12 py-1 rounded'>SAVE</button>
                                 <button onClick={clearEmployeeFields} className='bg-amber-500 text-white text-lg px-12 py-1 rounded'>RESET</button>
-                                <button onClick={deleteSupplier} className='bg-red-700 text-white text-lg px-12 py-1 rounded'>DELETE</button>
+                                <button onClick={deleteEmployee} className='bg-red-700 text-white text-lg px-12 py-1 rounded'>DELETE</button>
                             </div>
 
 
@@ -203,7 +244,6 @@ export function Employee() {
                     </div>
                 </div>
             )}
-
 
             <div className="h-auto mt-20">
                 <table className="w-full">
@@ -218,12 +258,12 @@ export function Employee() {
                     </thead>
                     <tbody>
                     {Array.isArray(employee) && employee.map((emp) => {
-                        const fullNameArray = emp.full_name.split(" ");
+                        const fullNameArray = emp.full_name ? emp.full_name.split(" ") : ["", ""];
                         const firstName = fullNameArray[0];
                         const lastName = fullNameArray.slice(1).join(" ");
                         return (
-                            <tr className="h-12 text-center" onClick={() => handleTableRowClick(emp)}>
-                            <td>{emp.employee_id}</td>
+                            <tr key={emp.employee_id} className="h-12 text-center" onClick={() => handleTableRowClick(emp)}>
+                                <td>{emp.employee_id}</td>
                                 <td>{emp.designationName}</td>
                                 <td>{firstName}</td>
                                 <td>{lastName}</td>
